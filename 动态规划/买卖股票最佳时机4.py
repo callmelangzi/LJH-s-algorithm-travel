@@ -1,1 +1,34 @@
-test1
+    给定一个整数数组 prices ，它的第 i 个元素 prices[i] 是一支给定的股票在第 i 天的价格。
+    设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。
+    注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+本题的k次交易在买卖3中已经实现
+```python 
+class Solution:
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        '''
+        动态规划
+
+        '''
+        if len(prices) == 0 : return 0
+        size = len(prices)
+        dp = [[[0 for _ in range(k+1)] for _ in range(2)] for _ in range(size)]
+        # 状态初始化
+        for i in range(k+1):
+            dp[0][0][i] = 0 
+            dp[0][1][i] = -prices[0]
+
+        for i in range(1,size):
+            for j in range(k+1):
+                dp[i][0][j] = max(dp[i-1][0][j],dp[i-1][1][j-1] + prices[i]) if j != 0 else dp[i-1][0][j]
+                dp[i][1][j] = max(dp[i-1][1][j], dp[i-1][0][j] - prices[i])
+        res = 0 
+        for i in range(k+1):
+            res = max(res,dp[-1][0][i])
+
+        return res 
+
+```
+
+
+如果k交换的次数大于prices数组的一般，那么就是不限定次数的交易，可以直接用股票买卖2的贪心算法处理，否则的话就用买卖3的代码
